@@ -1,0 +1,26 @@
+{
+  "name": "inovex_api",
+  "version": "1.0.0",
+  "description": "inovex is a agency management system built on MERN stack.",
+  "main": "index.js",
+  "module": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\"  && exit 1",
+    "start": "SET NODE_ENV=production & nodemon index",
+    "dev": "SET NODE_ENV=development & nodemon index"
+  },
+  "keywords": [],
+  "author": "aajafry",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "esm": "^3.2.25",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
