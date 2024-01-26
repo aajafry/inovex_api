@@ -12,12 +12,14 @@ const errorGuard = require('./middlewares/errorGuard');
 
 // import routes
 const homeRoute = require('./routes/home/route');
+const companyRoute = require('./routes/company/route');
 const serviceRoute = require('./routes/service/route'); 
 const clientRoute = require('./routes/client/route');
 const userRoute = require('./routes/team/route');
 const quotationRoute = require('./routes/quotation/route');
 const orderRoute = require('./routes/order/route');
 const ticketRoute = require('./routes/ticket/route');
+const invoiceRoute = require('./routes/invoice/route');
 
 // express app init
 const app = express();
@@ -41,12 +43,16 @@ app.get("/", (req, res) => {
 // jwt token genaretor route.
 app.use("/api", homeRoute);
 
+app.use("/api/company", companyRoute); // singular because per apps dedicated for each company.
 app.use("/api/services", serviceRoute);
+
 app.use("/api/clients", clientRoute);
 app.use("/api/users", userRoute);
+
 app.use("/api/quotations", quotationRoute);
 app.use("/api/orders", orderRoute);
 app.use("/api/tickets", ticketRoute);
+app.use("/api/invoices", invoiceRoute);
 
 // app listening port init.
 app.listen(PORT, () => {

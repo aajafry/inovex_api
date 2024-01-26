@@ -22,6 +22,13 @@ const orderSchema = new mongoose.Schema({
     completedAt: Date,
     quantity: Number,
     budget: Number,
+    status: {
+        type: String,
+        enum: {
+            values: ["ongoing","Process","Completed"],
+            message: '{VALUE} is not supported'
+        }
+    },
     // tickets details
     tickets: [{
         type: mongoose.Schema.Types.ObjectId,

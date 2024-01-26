@@ -13,6 +13,11 @@ const serviceSchema = new mongoose.Schema({
         }
     },
     price: Number,
+    // Invoice details
+    invoice: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Invoice' 
+    }]
 }, { timestamps: true })
 
 const serviceModel = mongoose.model("Service", serviceSchema);
