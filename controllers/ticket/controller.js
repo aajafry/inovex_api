@@ -1,13 +1,17 @@
 const ticketModel = require('../../models/ticket/model');
 const orderModel = require('../../models/order/model');
-const userModel = require('../../models/team/model');
-const clientModel = require('../../models/client/model');
+
+// ### deprecated ###
+// const employeeModel = require('../../models/employee/model');
+// const clientModel = require('../../models/client/model');
+
+const userModel = require('../../models/user/model');
 
 const ticketController = {
     create: async (req, res) => {
-        let orderID = "65b379eb6978ab03ed7e642e",
-            clientID = "65b36ff5aa0cf640d59e1113",
-            managerID = "65b371ad739855a3df57624c";
+        let orderID = "65b3d3113e17b13c50fbef9f",
+            clientID = "65b3cb67a06abb1ead631670",
+            managerID = "65b3cb21a06abb1ead63166e";
     
        const newTicket = new ticketModel({
             ...req.body,
@@ -22,12 +26,22 @@ const ticketController = {
         await orderModel.updateOne({ _id: populatedTicket.order }, {
             $push: { tickets: populatedTicket._id }
         });
-        await clientModel.updateOne({ _id: populatedTicket.client }, {
+
+        // ### deprecated ###
+        // await clientModel.updateOne({ _id: populatedTicket.client }, {
+        //     $push: { tickets: populatedTicket._id }
+        // });
+        // await employeeModel.updateOne({ _id: populatedTicket.manager }, {
+        //     $push: { tickets: populatedTicket._id }
+        // });
+
+        await userModel.updateOne({ _id: populatedTicket.client }, {
             $push: { tickets: populatedTicket._id }
         });
         await userModel.updateOne({ _id: populatedTicket.manager }, {
             $push: { tickets: populatedTicket._id }
         });
+
         res.status(200).json({ 
             tickets: populatedTicket, 
             message: "Successfully Inserted New Ticket" 

@@ -4,7 +4,8 @@ const invoiceSchema = new mongoose.Schema({
     // client name
     client: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Client' 
+        // ref: 'Client'  // ### deprecated ###
+        ref: 'User' 
     },
     country: String,
     city: String,

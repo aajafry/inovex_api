@@ -14,8 +14,12 @@ const errorGuard = require('./middlewares/errorGuard');
 const homeRoute = require('./routes/home/route');
 const companyRoute = require('./routes/company/route');
 const serviceRoute = require('./routes/service/route'); 
-const clientRoute = require('./routes/client/route');
-const userRoute = require('./routes/team/route');
+
+// ### deprecated ###
+// const clientRoute = require('./routes/client/route');
+// const employeeRoute = require('./routes/employee/route');
+const userRoute = require('./routes/user/route');
+
 const quotationRoute = require('./routes/quotation/route');
 const orderRoute = require('./routes/order/route');
 const ticketRoute = require('./routes/ticket/route');
@@ -46,7 +50,10 @@ app.use("/api", homeRoute);
 app.use("/api/company", companyRoute); // singular because per apps dedicated for each company.
 app.use("/api/services", serviceRoute);
 
-app.use("/api/clients", clientRoute);
+
+// ### deprecated ###
+// app.use("/api/clients", clientRoute);
+// app.use("/api/employees", employeeRoute);
 app.use("/api/users", userRoute);
 
 app.use("/api/quotations", quotationRoute);

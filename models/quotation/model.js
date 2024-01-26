@@ -9,11 +9,13 @@ const quotationSchema = new mongoose.Schema({
     // client name
     client: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Client' 
+        // ref: 'Client' // ### deprecated ###
+        ref: 'User' 
     },
     // manager name
     manager: {
         type: mongoose.Schema.Types.ObjectId,
+        // ref: 'Employee' // ### deprecated ###
         ref: 'User' 
     },
     brif: String,

@@ -4,8 +4,8 @@ const serviceModel = require('../../models/service/model');
 const invoiceController = {
     create: async (req, res) => {
         let serviceID = "65b36e430555338bceb2fa2d",
-            clientID = "65b36ff5aa0cf640d59e1113",
-            orderID = "65b379eb6978ab03ed7e642e";
+            clientID = "65b3cb67a06abb1ead631670",
+            orderID = "65b3d3113e17b13c50fbef9f";
         
         const newInvoice = new invoiceModel({
             ...req.body,

@@ -1,12 +1,16 @@
 const quotationModel = require('../../models/quotation/model');
-const clientModel = require('../../models/client/model');
-const userModel = require('../../models/team/model');
+
+// ### deprecated ###
+// const clientModel = require('../../models/client/model');
+// const employeeModel = require('../../models/employee/model');
+
+const userModel = require('../../models/user/model');
 
 const quotationController = {
     create: async (req, res) => {
         let serviceID = "65b36e430555338bceb2fa2d",
-            clientID = "65b36ff5aa0cf640d59e1113",
-            managerID = "65b371ad739855a3df57624c";
+            clientID = "65b3cb67a06abb1ead631670",
+            managerID = "65b3cb21a06abb1ead63166e";
        const newQuotation = new quotationModel({
             ...req.body,
             // could i use req.body.order or '' then i manage this clientend ?
@@ -17,12 +21,21 @@ const quotationController = {
        try {
            const populatedQuotation = await newQuotation.save();
 
-           await clientModel.updateOne({ _id: populatedQuotation.client }, {
+        // ### deprecated ###
+        //    await clientModel.updateOne({ _id: populatedQuotation.client }, {
+        //        $push: { quotations: populatedQuotation._id }
+        //     });
+        //    await employeeModel.updateOne({ _id: populatedQuotation.manager }, {
+        //        $push: { quotations: populatedQuotation._id }
+        //     });
+
+           await userModel.updateOne({ _id: populatedQuotation.client }, {
                $push: { quotations: populatedQuotation._id }
             });
            await userModel.updateOne({ _id: populatedQuotation.manager }, {
                $push: { quotations: populatedQuotation._id }
             });
+            
            res.status(200).json({ 
               quotations: populatedQuotation,
               message: "Successfully Inserted New Quotation" 

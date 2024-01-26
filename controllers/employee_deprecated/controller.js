@@ -1,13 +1,13 @@
-const userModel = require('../../models/team/model');
+const employeeModel = require('../../models/employee_deprecated/model');
 
-const userController = {
+const employeeController = {
     create: async (req, res) => {
-        const newUser = new userModel(req.body)
+        const newEmployee = new employeeModel(req.body)
         try {
-         await newUser.save();
+         await newEmployee.save();
          res.status(200).json({ 
-            users: newUser, 
-            message: "Successfully Inserted New User"
+            employee: newEmployee, 
+            message: "Successfully Inserted New Employee"
         })
         } catch (error) {
          res.status(500).json({ message: "Thare was a Server Side Error" })
@@ -15,13 +15,13 @@ const userController = {
     },
     getAll: async (req, res) => {
         try {
-            const user = await userModel.find()
+            const employee = await employeeModel.find()
               .populate('orders')
               .populate('quotations')
               .populate('tickets')
               .exec();
             res.status(200).json({ 
-                users: user, 
+                employees: employee, 
                 message: "Successfully Retrieved" 
             })
         } catch (error) {
@@ -30,16 +30,16 @@ const userController = {
     },
     findById: async (req, res) => {
         try {
-            const user = await userModel.findById(req.params.id)
+            const employee = await employeeModel.findById(req.params.id)
               .populate('orders')
               .populate('quotations')
               .populate('tickets')
               .exec();
-            if (user == null) {
-                return res.status(404).json({ message: 'User Not Found' });
+            if (employee == null) {
+                return res.status(404).json({ message: 'Employee Not Found' });
             }
             res.status(200).json({ 
-                users: user, 
+                employee: employee, 
                 message: "Successfully Retrieved" 
             })
         } catch (error) {
@@ -48,7 +48,7 @@ const userController = {
     },
     updateById: async (req, res) => {
         try {
-            const user = await userModel.findByIdAndUpdate(
+            const employee = await employeeModel.findByIdAndUpdate(
                 req.params.id,
                 { $set: {
                     name: req.body.name,
@@ -59,11 +59,11 @@ const userController = {
                 },
                 { new: true }
             );
-            if (user == null) {
-                return res.status(404).json({ message: 'User Not Found' });
+            if (employee == null) {
+                return res.status(404).json({ message: 'Employee Not Found' });
             }
             res.status(200).json({ 
-                users: user, 
+                employee: employee, 
                 message: "Successfully Updated" 
             })
         } catch (error) {
@@ -72,12 +72,12 @@ const userController = {
     },
     deleteById: async (req, res) => {
         try {
-            const user = await userModel.findByIdAndDelete(req.params.id);
-            if (user == null) {
-                return res.status(404).json({ message: 'User not Found' });
+            const employee = await employeeModel.findByIdAndDelete(req.params.id);
+            if (employee == null) {
+                return res.status(404).json({ message: 'Employee not Found' });
             }
             res.status(200).json({ 
-                users: user, 
+                employee: employee, 
                 message: "Successfully Deleted" 
             })
         } catch (error) {
@@ -86,4 +86,4 @@ const userController = {
     }
 }
 
-module.exports = userController;
+module.exports = employeeController;

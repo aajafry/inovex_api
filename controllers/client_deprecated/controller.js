@@ -1,4 +1,4 @@
-const clientModel = require('../../models/client/model');
+const clientModel = require('../../models/client_deprecated/model');
 
 const clientController = {
     create: async (req, res) => {

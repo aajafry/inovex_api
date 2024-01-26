@@ -1,12 +1,16 @@
 const orderModel = require('../../models/order/model');
-const clientModel = require('../../models/client/model');
-const userModel = require('../../models/team/model');
+
+// ### deprecated ###
+// const clientModel = require('../../models/client/model');
+// const employeeModel = require('../../models/employee/model');
+
+const userModel = require('../../models/user/model');
 
 const orderController = {
     create: async (req, res) => {
         let serviceID = "65b36e430555338bceb2fa2d",
-            clientID = "65b36ff5aa0cf640d59e1113",
-            managerID = "65b371ad739855a3df57624c";
+            clientID = "65b3cb67a06abb1ead631670",
+            managerID = "65b3cb21a06abb1ead63166e";
         const newOrder = new orderModel({
             ...req.body,
         // could i use req.body.order or '' then i manage this clientend ?
@@ -16,12 +20,22 @@ const orderController = {
         });
         try {
             const populatedOrder = await newOrder.save();
-            await clientModel.updateOne({ _id: populatedOrder.client }, {
+
+            // ### deprecated ###
+            // await clientModel.updateOne({ _id: populatedOrder.client }, {
+            //     $push: {  orders: populatedOrder._id }
+            // });
+            // await employeeModel.updateOne({ _id: populatedOrder.manager }, {
+            //     $push: {  orders: populatedOrder._id }
+            // });
+
+            await userModel.updateOne({ _id: populatedOrder.client }, {
                 $push: {  orders: populatedOrder._id }
             });
             await userModel.updateOne({ _id: populatedOrder.manager }, {
                 $push: {  orders: populatedOrder._id }
             });
+
             res.status(200).json({ 
                 orders: populatedOrder, 
                 message: "Successfully Inserted new Order" 

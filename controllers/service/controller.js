@@ -16,7 +16,8 @@ const serviceController = {
     getAll: async (req, res) => {
         try {
             const service = await serviceModel.find()
-            .populate("invoice", "_id").exec();
+                .populate("invoice", "_id")
+                .exec();
             res.status(200).json({
                 services: service, 
                 message: "Successfully Retrieved" 
@@ -28,7 +29,8 @@ const serviceController = {
     findById: async (req, res) => {
         try {
             const service = await serviceModel.findById(req.params.id)
-            .populate("invoice").exec();
+            .populate("invoice")
+            .exec();
             if (service == null) {
                 return res.status(404).json({ message: 'service Not Found' });
             }
