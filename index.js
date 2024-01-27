@@ -11,19 +11,18 @@ const URI =  process.env.DB_URI;
 const errorGuard = require('./middlewares/errorGuard');
 
 // import routes
-const homeRoute = require('./routes/home/route');
+const loginRoute = require('./routes/login/route');
 const companyRoute = require('./routes/company/route');
 const serviceRoute = require('./routes/service/route'); 
-
-// ### deprecated ###
-// const clientRoute = require('./routes/client/route');
-// const employeeRoute = require('./routes/employee/route');
 const userRoute = require('./routes/user/route');
-
 const quotationRoute = require('./routes/quotation/route');
 const orderRoute = require('./routes/order/route');
 const ticketRoute = require('./routes/ticket/route');
 const invoiceRoute = require('./routes/invoice/route');
+// ### deprecated ###
+// const homeRoute = require('./routes/home/route');
+// const clientRoute = require('./routes/client/route');
+// const employeeRoute = require('./routes/employee/route');
 
 // express app init
 const app = express();
@@ -45,21 +44,20 @@ app.get("/", (req, res) => {
 });
 
 // jwt token genaretor route.
-app.use("/api", homeRoute);
-
+app.use("/api/", loginRoute);
 app.use("/api/company", companyRoute); // singular because per apps dedicated for each company.
 app.use("/api/services", serviceRoute);
-
-
-// ### deprecated ###
-// app.use("/api/clients", clientRoute);
-// app.use("/api/employees", employeeRoute);
 app.use("/api/users", userRoute);
-
 app.use("/api/quotations", quotationRoute);
 app.use("/api/orders", orderRoute);
 app.use("/api/tickets", ticketRoute);
 app.use("/api/invoices", invoiceRoute);
+
+// ### deprecated ###
+// jwt token genaretor route.
+// app.use("/api", homeRoute);
+// app.use("/api/clients", clientRoute);
+// app.use("/api/employees", employeeRoute);
 
 // app listening port init.
 app.listen(PORT, () => {

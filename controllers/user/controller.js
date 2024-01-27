@@ -1,16 +1,60 @@
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 const userModel = require('../../models/user/model');
 
 const userController = {
     create: async (req, res) => {
-        const newUser = new userModel(req.body)
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const newUser = new userModel({
+            name: req.body.name,
+            email: req.body.email,
+            password: hashedPassword,
+            country: req.body.country,
+            city: req.body.city,
+            state: req.body.state,
+            zip: req.body.zip,
+            role: req.body.role,
+            image: req.body.image,
+        });
         try {
          await newUser.save();
          res.status(200).json({ 
-            user: newUser, 
+            // user: newUser, 
             message: "Successfully Inserted New User"
         })
         } catch (error) {
          res.status(500).json({ message: "Thare was a Server Side Error" })
+        }
+    },
+    login: async (req, res) => {
+        try {
+            const user = await userModel.find({ email: req.body.email });
+
+            if (user && user.length > 0) {
+                const isValidPassword = await bcrypt.compare(
+                    req.body.password, user[0].password
+                );
+                if (isValidPassword) {
+                   // generate token
+                    const token = jwt.sign({
+                      userEmail: user[0].email,
+                      userRole: user[0].role,
+                    }, process.env.JWT_SECRET,
+                    // {expiresIn: '1h'}
+                    );
+                    res.status(200).json({ 
+                      access_token: token,
+                      message: "Login Successful!"
+                    })
+                } else {
+                    res.status(401).json({error: "Authetication Failed!"})
+                }
+            } else {
+                res.status(401).json({error: "Authetication Failed!"})
+            } 
+        } catch (error) {
+         res.status(500).json({message: "Thare was a Server Side Error"})
         }
     },
     getAll: async (req, res) => {
