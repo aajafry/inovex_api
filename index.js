@@ -19,17 +19,13 @@ const quotationRoute = require('./routes/quotation/route');
 const orderRoute = require('./routes/order/route');
 const ticketRoute = require('./routes/ticket/route');
 const invoiceRoute = require('./routes/invoice/route');
-// ### deprecated ###
-// const homeRoute = require('./routes/home/route');
-// const clientRoute = require('./routes/client/route');
-// const employeeRoute = require('./routes/employee/route');
 
 // express app init
 const app = express();
 
 // middleware init
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 app.use(errorGuard);
 
 // database connection with mongoose.
@@ -52,12 +48,6 @@ app.use("/api/quotations", quotationRoute);
 app.use("/api/orders", orderRoute);
 app.use("/api/tickets", ticketRoute);
 app.use("/api/invoices", invoiceRoute);
-
-// ### deprecated ###
-// jwt token genaretor route.
-// app.use("/api", homeRoute);
-// app.use("/api/clients", clientRoute);
-// app.use("/api/employees", employeeRoute);
 
 // app listening port init.
 app.listen(PORT, () => {

@@ -9,13 +9,11 @@ const orderSchema = new mongoose.Schema({
     // client name
     client: {
         type: mongoose.Schema.Types.ObjectId,
-        // ref: 'Client' // ### deprecated ###
         ref: 'User' 
     },
     // manager name
     manager: {
         type: mongoose.Schema.Types.ObjectId,
-        // ref: 'Employee' // ### deprecated ###
         ref: 'User' 
     },
     brif: String,
@@ -27,7 +25,7 @@ const orderSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: {
-            values: ["ongoing","Process","Completed"],
+            values: ["Ongoing","Process","Completed"],
             message: '{VALUE} is not supported'
         }
     },
@@ -47,6 +45,7 @@ module.exports = orderModel;
 {
     "brif": "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>",
     "quantity": 3,
-    "budget": 460
+    "budget": 460,
+    "status": "Process"
 }
  */

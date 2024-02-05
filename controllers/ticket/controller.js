@@ -1,24 +1,14 @@
 const ticketModel = require('../../models/ticket/model');
 const orderModel = require('../../models/order/model');
-
-// ### deprecated ###
-// const employeeModel = require('../../models/employee/model');
-// const clientModel = require('../../models/client/model');
-
 const userModel = require('../../models/user/model');
 
 const ticketController = {
     create: async (req, res) => {
-        let orderID = "65b3d3113e17b13c50fbef9f",
-            clientID = "65b3cb67a06abb1ead631670",
-            managerID = "65b3cb21a06abb1ead63166e";
-    
        const newTicket = new ticketModel({
             ...req.body,
-       // could i use req.body.order or '' then i manage this clientend ?
-            order: orderID,
-            client: clientID,
-            manager: managerID,
+            order: req.body.order,
+            client: req.body.client,
+            manager: req.body.manager,
         })
        try {
         const populatedTicket = await newTicket.save();
@@ -26,15 +16,6 @@ const ticketController = {
         await orderModel.updateOne({ _id: populatedTicket.order }, {
             $push: { tickets: populatedTicket._id }
         });
-
-        // ### deprecated ###
-        // await clientModel.updateOne({ _id: populatedTicket.client }, {
-        //     $push: { tickets: populatedTicket._id }
-        // });
-        // await employeeModel.updateOne({ _id: populatedTicket.manager }, {
-        //     $push: { tickets: populatedTicket._id }
-        // });
-
         await userModel.updateOne({ _id: populatedTicket.client }, {
             $push: { tickets: populatedTicket._id }
         });

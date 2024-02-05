@@ -8,34 +8,20 @@ const userModel = require('../../models/user/model');
 
 const orderController = {
     create: async (req, res) => {
-        let serviceID = "65b36e430555338bceb2fa2d",
-            clientID = "65b3cb67a06abb1ead631670",
-            managerID = "65b3cb21a06abb1ead63166e";
         const newOrder = new orderModel({
             ...req.body,
-        // could i use req.body.order or '' then i manage this clientend ?
-            service: serviceID,
-            client: clientID,
-            manager: managerID,
+            service: req.body.service,
+            client: req.body.client,
+            manager: req.body.manager,
         });
         try {
             const populatedOrder = await newOrder.save();
-
-            // ### deprecated ###
-            // await clientModel.updateOne({ _id: populatedOrder.client }, {
-            //     $push: {  orders: populatedOrder._id }
-            // });
-            // await employeeModel.updateOne({ _id: populatedOrder.manager }, {
-            //     $push: {  orders: populatedOrder._id }
-            // });
-
             await userModel.updateOne({ _id: populatedOrder.client }, {
                 $push: {  orders: populatedOrder._id }
             });
             await userModel.updateOne({ _id: populatedOrder.manager }, {
                 $push: {  orders: populatedOrder._id }
             });
-
             res.status(200).json({ 
                 orders: populatedOrder, 
                 message: "Successfully Inserted new Order" 

@@ -4,7 +4,6 @@ const invoiceSchema = new mongoose.Schema({
     // client name
     client: {
         type: mongoose.Schema.Types.ObjectId,
-        // ref: 'Client'  // ### deprecated ###
         ref: 'User' 
     },
     country: String,
@@ -34,6 +33,7 @@ const invoiceSchema = new mongoose.Schema({
         }
     },
     note: String,
+
 },{ timestamps: true })
 
 const invoiceModel = mongoose.model("Invoice", invoiceSchema);

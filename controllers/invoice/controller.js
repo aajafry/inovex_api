@@ -3,16 +3,11 @@ const serviceModel = require('../../models/service/model');
 
 const invoiceController = {
     create: async (req, res) => {
-        let serviceID = "65b36e430555338bceb2fa2d",
-            clientID = "65b3cb67a06abb1ead631670",
-            orderID = "65b3d3113e17b13c50fbef9f";
-        
         const newInvoice = new invoiceModel({
             ...req.body,
-            // could i use req.body.order or '' then i manage this clientend ?
-            service: serviceID,
-            client: clientID,
-            orderId: orderID,
+            service: req.body.service,
+            client: req.body.client,
+            orderId: req.body.orderId,
         });
         try {
             const populatedInvoice = await newInvoice.save();
@@ -30,7 +25,7 @@ const invoiceController = {
     getAll: async (req, res) => {
         try {
             const invoice = await invoiceModel.find()
-              .populate("client", "name")
+              .populate("client")
               .populate("service", "name")
               .populate("orderId", "_id")
               .exec();
@@ -45,7 +40,7 @@ const invoiceController = {
     findById: async (req, res) => {
         try {
             const invoice = await invoiceModel.findById(req.params.id)
-              .populate("client", "name")
+              .populate("client")
               .populate("service", "name")
               .populate("orderId", "_id")
               .exec(); 

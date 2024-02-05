@@ -11,13 +11,11 @@ const ticketSchema = new mongoose.Schema({
     // client name
     client: {
         type: mongoose.Schema.Types.ObjectId,
-        // ref: 'Client' // ### deprecated ###
         ref: 'User' 
     },
     // manager  name
     manager: {
         type: mongoose.Schema.Types.ObjectId,
-        // ref: 'Employee' // ### deprecated ###
         ref: 'User' 
     },
     priority: {
@@ -34,7 +32,7 @@ const ticketSchema = new mongoose.Schema({
             message: '{VALUE} is not supported'
         }
     }
-})
+},{ timestamps: true })
 
 const ticketModel = mongoose.model("Ticket", ticketSchema);
 

@@ -1,33 +1,17 @@
 const quotationModel = require('../../models/quotation/model');
 
-// ### deprecated ###
-// const clientModel = require('../../models/client/model');
-// const employeeModel = require('../../models/employee/model');
-
 const userModel = require('../../models/user/model');
 
 const quotationController = {
     create: async (req, res) => {
-        let serviceID = "65b36e430555338bceb2fa2d",
-            clientID = "65b3cb67a06abb1ead631670",
-            managerID = "65b3cb21a06abb1ead63166e";
        const newQuotation = new quotationModel({
             ...req.body,
-            // could i use req.body.order or '' then i manage this clientend ?
-            service: serviceID,
-            client: clientID,
-            manager: managerID,
+            service: req.body.service,
+            client: req.body.client,
+            manager: req.body.manager,
         })
        try {
            const populatedQuotation = await newQuotation.save();
-
-        // ### deprecated ###
-        //    await clientModel.updateOne({ _id: populatedQuotation.client }, {
-        //        $push: { quotations: populatedQuotation._id }
-        //     });
-        //    await employeeModel.updateOne({ _id: populatedQuotation.manager }, {
-        //        $push: { quotations: populatedQuotation._id }
-        //     });
 
            await userModel.updateOne({ _id: populatedQuotation.client }, {
                $push: { quotations: populatedQuotation._id }

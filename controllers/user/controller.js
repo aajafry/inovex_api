@@ -14,6 +14,7 @@ const userController = {
             city: req.body.city,
             state: req.body.state,
             zip: req.body.zip,
+            address: req.body.city + ', ' + req.body.state + ', ' + req.body.country + ', ' + req.body.zip,  
             role: req.body.role,
             image: req.body.image,
         });

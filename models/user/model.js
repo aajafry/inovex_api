@@ -31,7 +31,16 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Ticket' 
     }]
-}, { timestamps: true })
+}, {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }, 
+    timestamps: true 
+})
+
+
+userSchema.virtual('address').get(function() {
+    return this.city + ', ' + this.state + ', ' + this.country + ', ' + this.zip;
+});
 
 const userModel = mongoose.model("User", userSchema);
 
@@ -39,13 +48,12 @@ module.exports = userModel;
 
 /**
 {
-    "name" : "smith",
-    "email": "smith@gmail.com",
-    "password": "smith123",
+    "name" : "jack",
+    "email": "jack@gmail.com",
     "country": "USA",
     "city": "new york",
     "state": "new york",
     "zip": 1234
-    "role": "Admin"
+    "role": "Client"
 }
  */
