@@ -5,7 +5,9 @@ const cors = require('cors');
 
 // const variable declaretion.
 const PORT = process.env.PORT || 5000;
-const URI =  process.env.DB_URI;
+// const URI =  process.env.DB_URI;
+
+const URI =process.env.DB_URI;
 
 // import middlewares
 const errorGuard = require('./middlewares/errorGuard');
