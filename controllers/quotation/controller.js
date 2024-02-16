@@ -1,18 +1,23 @@
 const quotationModel = require('../../models/quotation/model');
-
+const companyModel = require('../../models/company/model');
 const userModel = require('../../models/user/model');
 
 const quotationController = {
     create: async (req, res) => {
-       const newQuotation = new quotationModel({
+        const companyId = '65b36da80555338bceb2fa29';
+        const url = req.protocol + '://' + req.get('host');
+        const newQuotation = new quotationModel({
             ...req.body,
             service: req.body.service,
             client: req.body.client,
             manager: req.body.manager,
+            attachment: url + '/public/' + req?.file?.filename
         })
        try {
            const populatedQuotation = await newQuotation.save();
-
+            await companyModel.updateOne({ _id: companyId }, {
+                $push: {  quotations: populatedQuotation._id }
+            });
            await userModel.updateOne({ _id: populatedQuotation.client }, {
                $push: { quotations: populatedQuotation._id }
             });

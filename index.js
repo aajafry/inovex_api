@@ -1,15 +1,15 @@
 require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
+const express = require('express'),
+    mongoose = require('mongoose'),
+    cors = require('cors'),
+    bodyParser = require("body-parser");
 
 // const variable declaretion.
+const URI = process.env.DB_URI;
 const PORT = process.env.PORT || 5000;
-// const URI =  process.env.DB_URI;
-
-const URI =process.env.DB_URI;
 
 // import middlewares
+const callbackGuard = require('./middlewares/callbackGuard');
 const errorGuard = require('./middlewares/errorGuard');
 
 // import routes
@@ -27,8 +27,13 @@ const app = express();
 
 // middleware init
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: false,
+  }),
+);
 app.use(cors());
-app.use(errorGuard);
 
 // database connection with mongoose.
 mongoose
@@ -36,14 +41,14 @@ mongoose
   .then(() => console.log("Connection Successful"))
   .catch((err) => console.log(err))
 
-// application test routes
-app.get("/", (req, res) => {
-    res.send("Get Req From Home Route")
-});
-
+// application test route.
+app.get("/", (req, res) => res.send("Get Req From Home Route"));
+// static file public route.
+app.use("/public", express.static("public"));
 // jwt token genaretor route.
 app.use("/api/", loginRoute);
-app.use("/api/company", companyRoute); // singular because per apps dedicated for each company.
+// singular because per apps dedicated for each company.
+app.use("/api/company", companyRoute); 
 app.use("/api/services", serviceRoute);
 app.use("/api/users", userRoute);
 app.use("/api/quotations", quotationRoute);
@@ -52,8 +57,15 @@ app.use("/api/tickets", ticketRoute);
 app.use("/api/invoices", invoiceRoute);
 
 // app listening port init.
-app.listen(PORT, () => {
-    console.log(`Server is Running on Port ${PORT}`)
-})
+app.listen(PORT, () => console.log(`Server is Running on Port ${PORT}`))
+
+// error middleware init
+app.use(callbackGuard);
+app.use(errorGuard);
+app.use(function (err, req, res, next) {
+  console.error(err.message);
+ if (!err.statusCode) err.statusCode = 501;
+ res.status(err.statusCode).send(err.message);
+});
 
 module.exports = app

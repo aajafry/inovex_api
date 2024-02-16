@@ -1,8 +1,8 @@
-const express = require('express');
-const authGuard = require('../../middlewares/authGuard');
-const ticketController = require('../../controllers/ticket/controller');
+let express = require('express');
+let authGuard = require('../../middlewares/authGuard');
+let ticketController = require('../../controllers/ticket/controller');
 
-const ticketRoute = express.Router();
+let ticketRoute = express.Router();
 
 ticketRoute.use(authGuard);
 

@@ -17,7 +17,7 @@ const orderSchema = new mongoose.Schema({
         ref: 'User' 
     },
     brif: String,
-    attachment: Array,
+    attachment: String,
     openedAt: Date,
     completedAt: Date,
     quantity: Number,
@@ -34,7 +34,10 @@ const orderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Ticket' 
     }]
-},{ timestamps: true });
+},{ 
+    timestamps: true,
+    collection: 'orders'
+ });
 
 
 const orderModel = mongoose.model("Order", orderSchema);

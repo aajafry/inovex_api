@@ -2,7 +2,11 @@ const companyModel = require('../../models/company/model');
 
 const companyController = {
     create: async (req, res) => {
-        const newCompany = new companyModel(req.body);
+        const url = req.protocol + '://' + req.get('host')
+        const newCompany = new companyModel({
+            ...req.body,
+            logo: url + '/public/' + req?.file?.filename
+        });
         try {
          await newCompany.save();
          res.status(200).json({ 
@@ -16,6 +20,13 @@ const companyController = {
     getAll: async (req, res) => {
         try {
             const company = await companyModel.find()
+            .populate("users")
+            .populate("services")
+            .populate("quotations")
+            .populate("orders")
+            .populate("tickets")
+            .populate("invoices")
+            .exec();
             res.status(200).json({
                 company: company,
                 message: "Successfully Retrieved"
@@ -26,7 +37,14 @@ const companyController = {
     },
     findById: async (req, res) => {
         try {
-            const company = await companyModel.findById(req.params.id) 
+            const company = await companyModel.findById(req.params.id)
+                    .populate("users")
+                    .populate("services")
+                    .populate("quotations")
+                    .populate("orders")
+                    .populate("tickets")
+                    .populate("invoices")
+                    .exec(); 
             if (company == null) {
                 return res.status(404).json({ message: 'Company not Found' });
             }

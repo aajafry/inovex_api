@@ -1,8 +1,8 @@
-const express = require('express');
-const authGuard = require('../../middlewares/authGuard');
-const invoiceController = require('../../controllers/invoice/controller');
+let express = require('express');
+let authGuard = require('../../middlewares/authGuard');
+let invoiceController = require('../../controllers/invoice/controller');
 
-const invoiceRoute = express.Router();
+let invoiceRoute = express.Router();
 
 invoiceRoute.use(authGuard);
 

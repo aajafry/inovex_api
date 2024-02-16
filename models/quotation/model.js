@@ -17,12 +17,15 @@ const quotationSchema = new mongoose.Schema({
         ref: 'User' 
     },
     brif: String,
-    attachment: Array,
+    attachment: String,
     openedAt: Date,
     completedAt: Date,
     quantity: Number,
     budget: Number,
-},{ timestamps: true });
+},{ 
+    timestamps: true,
+    collection: 'quotations'
+ });
 
 const quotationModel = mongoose.model("Quotation", quotationSchema);
 

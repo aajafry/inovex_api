@@ -16,7 +16,7 @@ const invoiceSchema = new mongoose.Schema({
         ref: 'Service' 
     },
     // order id
-    orderId: {
+    order: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Order' 
     },
@@ -34,7 +34,10 @@ const invoiceSchema = new mongoose.Schema({
     },
     note: String,
 
-},{ timestamps: true })
+},{ 
+    timestamps: true,
+    collection: 'invoices'  
+})
 
 const invoiceModel = mongoose.model("Invoice", invoiceSchema);
 

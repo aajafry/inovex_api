@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
             message: '{VALUE} is not supported'
         }
     },
-    image: Array,
+    image: String,
     // orders details
     orders: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -34,7 +34,8 @@ const userSchema = new mongoose.Schema({
 }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true }, 
-    timestamps: true 
+    timestamps: true,
+    collection: 'users' 
 })
 
 

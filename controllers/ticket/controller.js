@@ -1,9 +1,11 @@
 const ticketModel = require('../../models/ticket/model');
-const orderModel = require('../../models/order/model');
+const companyModel = require('../../models/company/model');
 const userModel = require('../../models/user/model');
+const orderModel = require('../../models/order/model');
 
 const ticketController = {
     create: async (req, res) => {
+       const companyId = '65b36da80555338bceb2fa29';
        const newTicket = new ticketModel({
             ...req.body,
             order: req.body.order,
@@ -12,7 +14,9 @@ const ticketController = {
         })
        try {
         const populatedTicket = await newTicket.save();
-
+        await companyModel.updateOne({ _id: companyId }, {
+            $push: { tickets: populatedTicket._id }
+        });
         await orderModel.updateOne({ _id: populatedTicket.order }, {
             $push: { tickets: populatedTicket._id }
         });

@@ -1,21 +1,23 @@
 const orderModel = require('../../models/order/model');
-
-// ### deprecated ###
-// const clientModel = require('../../models/client/model');
-// const employeeModel = require('../../models/employee/model');
-
+const companyModel = require('../../models/company/model');
 const userModel = require('../../models/user/model');
 
 const orderController = {
     create: async (req, res) => {
+        const companyId = '65b36da80555338bceb2fa29';
+        const url = req.protocol + '://' + req.get('host');
         const newOrder = new orderModel({
             ...req.body,
             service: req.body.service,
             client: req.body.client,
             manager: req.body.manager,
+            attachment: url + '/public/' + req?.file?.filename
         });
         try {
             const populatedOrder = await newOrder.save();
+            await companyModel.updateOne({ _id: companyId }, {
+                $push: {  orders: populatedOrder._id }
+            });
             await userModel.updateOne({ _id: populatedOrder.client }, {
                 $push: {  orders: populatedOrder._id }
             });

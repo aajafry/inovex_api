@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const serviceSchema = new mongoose.Schema({
     name: String,
     brif: String,
-    attachment: Array,
+    attachment: String,
     duration: String,
     paymentTerm: {
         type: String,
@@ -14,11 +14,14 @@ const serviceSchema = new mongoose.Schema({
     },
     price: Number,
     // Invoice details
-    invoice: [{
+    invoices: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Invoice' 
     }]
-}, { timestamps: true })
+}, { 
+    timestamps: true,
+    collection: 'services'
+ })
 
 const serviceModel = mongoose.model("Service", serviceSchema);
 

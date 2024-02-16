@@ -2,24 +2,30 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const userModel = require('../../models/user/model');
+const companyModel = require('../../models/company/model');
 
 const userController = {
     create: async (req, res) => {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const companyId = '65b36da80555338bceb2fa29';
+        const url = req.protocol + '://' + req.get('host');
+        const hashedPassword = await bcrypt.hash(req?.body?.password, 10);
         const newUser = new userModel({
-            name: req.body.name,
-            email: req.body.email,
+            name: req?.body?.name,
+            email: req?.body?.email,
             password: hashedPassword,
-            country: req.body.country,
-            city: req.body.city,
-            state: req.body.state,
-            zip: req.body.zip,
-            address: req.body.city + ', ' + req.body.state + ', ' + req.body.country + ', ' + req.body.zip,  
-            role: req.body.role,
-            image: req.body.image,
+            country: req?.body?.country,
+            city: req?.body?.city,
+            state: req?.body?.state,
+            zip: req?.body?.zip,
+            address: req?.body?.city + ', ' + req?.body?.state + ', ' + req?.body?.country + ', ' + req?.body?.zip,  
+            role: req?.body?.role,
+            image: url + '/public/' + req?.file?.filename,
         });
         try {
-         await newUser.save();
+        const populatedUser = await newUser.save();
+         await companyModel.updateOne({ _id: companyId }, {
+            $push: { users: populatedUser._id }
+        });
          res.status(200).json({ 
             // user: newUser, 
             message: "Successfully Inserted New User"

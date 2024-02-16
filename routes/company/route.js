@@ -1,12 +1,13 @@
-const express = require('express');
-const authGuard = require('../../middlewares/authGuard');
-const companyController = require('../../controllers/company/controller');
+let express = require('express');
+let authGuard = require('../../middlewares/authGuard');
+let upload = require('../../middlewares/uploadStorage');
+let companyController = require('../../controllers/company/controller');
 
-const companyRoute = express.Router();
+let companyRoute = express.Router();
 
 companyRoute.use(authGuard);
 
-companyRoute.post('/create', companyController.create);
+companyRoute.post('/create', upload.single('logo'), companyController.create);
 companyRoute.get('/', companyController.getAll);
 companyRoute.get('/:id', companyController.findById);
 companyRoute.put('/update/:id', companyController.updateById);

@@ -1,18 +1,23 @@
 const invoiceModel = require('../../models/invoice/model');
+const companyModel = require('../../models/company/model');
 const serviceModel = require('../../models/service/model');
 
 const invoiceController = {
     create: async (req, res) => {
+        const companyId = '65b36da80555338bceb2fa29';
         const newInvoice = new invoiceModel({
             ...req.body,
             service: req.body.service,
             client: req.body.client,
-            orderId: req.body.orderId,
+            order: req.body.order,
         });
         try {
             const populatedInvoice = await newInvoice.save();
+            await companyModel.updateOne({ _id: companyId }, {
+                $push: {  invoices: populatedInvoice._id }
+            });
             await serviceModel.updateOne({ _id: populatedInvoice.service }, {
-                $push: {  invoice: populatedInvoice._id }
+                $push: {  invoices: populatedInvoice._id }
             });
          res.status(200).json({ 
             invoice: populatedInvoice,
@@ -27,7 +32,7 @@ const invoiceController = {
             const invoice = await invoiceModel.find()
               .populate("client")
               .populate("service", "name")
-              .populate("orderId", "_id")
+              .populate("order", "_id")
               .exec();
             res.status(200).json({
                 invoices: invoice,
@@ -42,7 +47,7 @@ const invoiceController = {
             const invoice = await invoiceModel.findById(req.params.id)
               .populate("client")
               .populate("service", "name")
-              .populate("orderId", "_id")
+              .populate("order", "_id")
               .exec(); 
             if (invoice == null) {
                 return res.status(404).json({ message: 'Invoice not Found' });
@@ -66,7 +71,7 @@ const invoiceController = {
                     state: req.body.state,
                     zip: req.body.zip,
                     service: req.body.service,
-                    orderId: req.body.orderId,
+                    order: req.body.order,
                     payableAmt: req.body.payableAmt,
                     discAmt: req.body.discAmt,
                     paidAmt: req.body.paidAmt,

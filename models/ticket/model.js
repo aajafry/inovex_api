@@ -32,7 +32,10 @@ const ticketSchema = new mongoose.Schema({
             message: '{VALUE} is not supported'
         }
     }
-},{ timestamps: true })
+},{ 
+    timestamps: true,
+    collection: 'tickets'
+ })
 
 const ticketModel = mongoose.model("Ticket", ticketSchema);
 
