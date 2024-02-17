@@ -1,6 +1,6 @@
 const multer = require('multer');
 
-const DIR = '../public/';
+const DIR = './public';
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
