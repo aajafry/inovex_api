@@ -1,4 +1,18 @@
 const mongoose = require('mongoose');
+const z = require('zod');
+
+// Define Zod schema for quotation data validation
+const quotationSchemaZod = z.object({
+    service: z.any(),
+    client: z.any(),
+    manager: z.any(),
+    brif: z.string(),
+    attachment: z.any(),
+    openedAt: z.date().optional(),
+    completedAt: z.date().optional(),
+    quantity: z.number().positive(),
+    budget: z.number().positive(),
+});
 
 const quotationSchema = new mongoose.Schema({
     // service name
@@ -16,19 +30,58 @@ const quotationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User' 
     },
-    brif: String,
-    attachment: String,
-    openedAt: Date,
-    completedAt: Date,
-    quantity: Number,
-    budget: Number,
+    brif: {
+        type: String,
+        required: true
+    },
+    attachment: {
+        type: String,
+        required: true
+    },
+    openedAt: {
+        type: Date,
+        required: true
+    },
+    completedAt: {
+        type: Date,
+        required: true
+    },
+    quantity: {
+        type: Number,
+        min: 0,
+        required: true,
+    },
+    budget: {
+        type: Number,
+        min: 0,
+        required: true,
+    },
 },{ 
     timestamps: true,
     collection: 'quotations'
  });
 
-const quotationModel = mongoose.model("Quotation", quotationSchema);
+ // Function to validate quotation data against Zod schema
+const validateQuotation = (data) => {
+    const result = quotationSchemaZod.safeParse(data);
+    return {
+        success: result.success,
+        error: result.success ? null : result.error.message
+    };
+};
 
+// Middleware to validate quotation data before saving
+quotationSchema.pre('save', function (next) {
+    const validation = validateQuotation(this.toObject());
+    if (!validation.success) {
+        const error = new Error(validation.error);
+        console.log(error);
+        return next(error);
+    }
+    next();
+});
+
+const quotationModel = mongoose.model("Quotation", quotationSchema);
 module.exports = quotationModel;
 
 /**

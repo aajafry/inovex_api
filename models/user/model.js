@@ -1,13 +1,65 @@
 const mongoose = require('mongoose');
+const z = require('zod');
+
+// Define Zod schema for user data validation
+const userSchemaZod = z.object({
+    name: z.string()
+    .min(3, { message: "name must be contain at least 3 characters" })
+    .max(16, { message: "name must be contain at most 16 characters" }),
+    email: z.string().email({ message: "invalid email address" }),
+    password: z.string()
+      .min(8, { message: "password must be contain at least 8 characters long" })
+      .max(320, { message: "password must be contain at most 32 characters long" })
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*-])[A-Za-z\d!@#$%&*-]{8,}$/, {
+        message: "password must contain at least one lowercase letter, one uppercase letter, one number, and one special character",
+      }),
+    country: z.string()
+      .min(3, { message: "country name must be contain at least 3 characters" })
+      .max(16, { message: "country name must be contain at most 16 characters" }),
+    city: z
+      .string()
+      .min(3, { message: "country name must be contain at least 3 characters" })
+      .max(16, { message: "country name must be contain at most 16 characters" }),
+    state: z.string()
+    .min(3, { message: "state name must be contain at least 3 characters" })
+    .max(16, { message: "state name must be contain at most 16 characters" }),
+    zip: z.number().min(1000).max(999999),
+    role: z.enum(["Super Admin", "Admin", "Moderator", "Client", "User"]),
+    image: z.any(),
+    orders: z.array(z.string().optional()),
+    quotations: z.array(z.string().optional()),
+    tickets: z.array(z.string().optional())
+});
 
 const userSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    password: String,
-    country: String,
-    city: String,
-    state: String,
-    zip: Number,
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    country: {
+        type: String,
+        required: true
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    state: {
+        type: String,
+        required: true
+    },
+    zip: {
+        type: Number,
+        required: true
+    },
     role: {
         type: String,
         enum: {
@@ -43,8 +95,26 @@ userSchema.virtual('address').get(function() {
     return this.city + ', ' + this.state + ', ' + this.country + ', ' + this.zip;
 });
 
-const userModel = mongoose.model("User", userSchema);
+// Function to validate user data
+const validateUser = (data) => {
+    const result = userSchemaZod.safeParse(data);
+    return {
+        success: result.success,
+        error: result.success ? null : result.error.errors[0].message
+    };
+};
 
+// Middleware to validate order data before saving
+userSchema.pre('save', function (next) {
+    const validation = validateUser(this.toObject());
+    if (!validation.success) {
+        const error = new Error(validation.error);
+        return next(error);
+    }
+    next();
+});
+
+const userModel = mongoose.model("User", userSchema);
 module.exports = userModel;
 
 /**

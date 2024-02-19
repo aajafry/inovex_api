@@ -1,4 +1,20 @@
 const mongoose = require('mongoose');
+const z = require('zod');
+
+// Define Zod schema for order data validation
+const orderSchemaZod = z.object({
+    service: z.any(),
+    client: z.any(),
+    manager: z.any(),
+    brif: z.string(),
+    attachment: z.any(),
+    openedAt: z.date().optional(),
+    completedAt: z.date().optional(),
+    quantity: z.number().positive(),
+    budget: z.number().positive(),
+    status: z.enum(["Ongoing", "Process", "Completed"]),
+    tickets: z.array(z.string().optional()),
+});
 
 const orderSchema = new mongoose.Schema({
     // service name
@@ -16,12 +32,32 @@ const orderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User' 
     },
-    brif: String,
-    attachment: String,
-    openedAt: Date,
-    completedAt: Date,
-    quantity: Number,
-    budget: Number,
+    brif: {
+        type: String,
+        required: true
+    },
+    attachment: {
+        type: String,
+        required: true
+    },
+    openedAt: {
+        type: Date,
+        required: true
+    },
+    completedAt: {
+        type: Date,
+        required: true
+    },
+    quantity: {
+        type: Number,
+        min: 0,
+        required: true
+    },
+    budget: {
+        type: Number,
+        min: 0,
+        required: true
+    },
     status: {
         type: String,
         enum: {
@@ -39,6 +75,24 @@ const orderSchema = new mongoose.Schema({
     collection: 'orders'
  });
 
+ // Function to validate order data against Zod schema
+const validateOrder = (data) => {
+    const result = orderSchemaZod.safeParse(data);
+    return {
+        success: result.success,
+        error: result.success ? null : result.error.message
+    };
+};
+
+// Middleware to validate order data before saving
+orderSchema.pre('save', function (next) {
+    const validation = validateOrder(this.toObject());
+    if (!validation.success) {
+        const error = new Error(validation.error);
+        return next(error);
+    }
+    next();
+});
 
 const orderModel = mongoose.model("Order", orderSchema);
 
