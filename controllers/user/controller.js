@@ -6,7 +6,7 @@ const companyModel = require('../../models/company/model');
 
 const userController = {
     create: async (req, res) => {
-        const companyId = '65b36da80555338bceb2fa29';
+        const companyId = '65c687c66ec327c1dae9041f';
         const url = req.protocol + '://' + req.get('host');
         const hashedPassword = await bcrypt.hash(req?.body?.password, 10);
         const newUser = new userModel({

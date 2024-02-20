@@ -5,7 +5,7 @@ const orderModel = require('../../models/order/model');
 
 const ticketController = {
     create: async (req, res) => {
-       const companyId = '65b36da80555338bceb2fa29';
+       const companyId = '65c687c66ec327c1dae9041f';
        const newTicket = new ticketModel({
             ...req.body,
             order: req.body.order,

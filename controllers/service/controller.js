@@ -3,7 +3,7 @@ const companyModel = require('../../models/company/model');
 
 const serviceController = {
     create: async (req, res) => {
-        const companyId = '65b36da80555338bceb2fa29';
+        const companyId = '65c687c66ec327c1dae9041f';
         const url = req.protocol + '://' + req.get('host');
         const newService = new serviceModel({
             ...req.body,
