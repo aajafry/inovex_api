@@ -1,27 +1,30 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const cloudinary = require('../../utilities/cloudinary');
 
 const userModel = require('../../models/user/model');
 const companyModel = require('../../models/company/model');
 
 const userController = {
     create: async (req, res) => {
-        const companyId = '65c687c66ec327c1dae9041f';
-        const url = req.protocol + '://' + req.get('host');
-        const hashedPassword = await bcrypt.hash(req?.body?.password, 10);
-        const newUser = new userModel({
-            name: req?.body?.name,
-            email: req?.body?.email,
-            password: hashedPassword,
-            country: req?.body?.country,
-            city: req?.body?.city,
-            state: req?.body?.state,
-            zip: req?.body?.zip,
-            address: req?.body?.city + ', ' + req?.body?.state + ', ' + req?.body?.country + ', ' + req?.body?.zip,  
-            role: req?.body?.role,
-            image: url + '/public/' + req?.file?.filename,
-        });
         try {
+            const companyId = '65c687c66ec327c1dae9041f';
+            // const url = req.protocol + '://' + req.get('host');
+            const hashedPassword = await bcrypt.hash(req?.body?.password, 10);
+            const result = await cloudinary.uploader.upload(req?.file?.path);
+            const newUser = new userModel({
+                name: req?.body?.name,
+                email: req?.body?.email,
+                password: hashedPassword,
+                country: req?.body?.country,
+                city: req?.body?.city,
+                state: req?.body?.state,
+                zip: req?.body?.zip,
+                address: req?.body?.city + ', ' + req?.body?.state + ', ' + req?.body?.country + ', ' + req?.body?.zip,  
+                role: req?.body?.role,
+                image: result?.secure_url,
+                // image: url + '/public/' + req?.file?.filename,
+            });
         const populatedUser = await newUser.save();
          await companyModel.updateOne({ _id: companyId }, {
             $push: { users: populatedUser._id }
@@ -31,7 +34,11 @@ const userController = {
             message: "Successfully Inserted New User"
         })
         } catch (error) {
-         res.status(500).json({ message: "Thare was a Server Side Error" })
+         console.log(error);   
+         res.status(500).json({ 
+            message: "Thare was a Server Side Error",
+            error: error 
+         })
         }
     },
     login: async (req, res) => {

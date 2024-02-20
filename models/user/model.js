@@ -7,12 +7,7 @@ const userSchemaZod = z.object({
     .min(3, { message: "name must be contain at least 3 characters" })
     .max(16, { message: "name must be contain at most 16 characters" }),
     email: z.string().email({ message: "invalid email address" }),
-    password: z.string()
-      .min(8, { message: "password must be contain at least 8 characters long" })
-      .max(320, { message: "password must be contain at most 32 characters long" })
-      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*-])[A-Za-z\d!@#$%&*-]{8,}$/, {
-        message: "password must contain at least one lowercase letter, one uppercase letter, one number, and one special character",
-      }),
+    password: z.string(),
     country: z.string()
       .min(3, { message: "country name must be contain at least 3 characters" })
       .max(16, { message: "country name must be contain at most 16 characters" }),

@@ -1,13 +1,16 @@
+const cloudinary = require('../../utilities/cloudinary');
 const companyModel = require('../../models/company/model');
 
 const companyController = {
     create: async (req, res) => {
-        const url = req.protocol + '://' + req.get('host')
-        const newCompany = new companyModel({
-            ...req.body,
-            logo: url + '/public/' + req?.file?.filename
-        });
         try {
+        //  const url = req.protocol + '://' + req.get('host')
+         const result = await cloudinary.uploader.upload(req?.file?.path);
+         const newCompany = new companyModel({
+            ...req.body,
+            logo: result?.secure_url,
+            // logo: url + '/public/' + req?.file?.filename
+         });
          await newCompany.save();
          res.status(200).json({ 
             company: newCompany,

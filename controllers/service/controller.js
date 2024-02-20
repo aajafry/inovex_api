@@ -1,15 +1,18 @@
+const cloudinary = require('../../utilities/cloudinary');
 const serviceModel = require('../../models/service/model');
 const companyModel = require('../../models/company/model');
 
 const serviceController = {
     create: async (req, res) => {
-        const companyId = '65c687c66ec327c1dae9041f';
-        const url = req.protocol + '://' + req.get('host');
-        const newService = new serviceModel({
-            ...req.body,
-            attachment: url + '/public/' + req?.file?.filename
-        });
         try {
+            const companyId = '65c687c66ec327c1dae9041f';
+            // const url = req.protocol + '://' + req.get('host');
+            const result = await cloudinary.uploader.upload(req?.file?.path);
+            const newService = new serviceModel({
+                ...req.body,
+                attachment: result?.secure_url,
+                // attachment: url + '/public/' + req?.file?.filename
+            });
          const populatedService = await newService.save();
          await companyModel.updateOne({ _id: companyId }, {
             $push: {  services: populatedService._id }

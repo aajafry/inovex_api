@@ -43,7 +43,9 @@ mongoose
 
 // application test route.
 app.get("/", (req, res) => res.send("Get Req From Home Route"));
-// static file public route.
+// static file public route for multer uses.
+// when hosting provaider given file r/w permission use this.
+// most of cases hosting provaider did not given this king of permission.
 app.use("/public", express.static("public"));
 // jwt token genaretor route.
 app.use("/api/", loginRoute);

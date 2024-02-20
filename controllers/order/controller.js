@@ -1,19 +1,22 @@
+const cloudinary = require('../../utilities/cloudinary');
 const orderModel = require('../../models/order/model');
 const companyModel = require('../../models/company/model');
 const userModel = require('../../models/user/model');
 
 const orderController = {
     create: async (req, res) => {
-        const companyId = '65c687c66ec327c1dae9041f';
-        const url = req.protocol + '://' + req.get('host');
-        const newOrder = new orderModel({
-            ...req.body,
-            service: req.body.service,
-            client: req.body.client,
-            manager: req.body.manager,
-            attachment: url + '/public/' + req?.file?.filename
-        });
         try {
+            const companyId = '65c687c66ec327c1dae9041f';
+            // const url = req.protocol + '://' + req.get('host');
+            const result = await cloudinary.uploader.upload(req?.file?.path);
+            const newOrder = new orderModel({
+                ...req.body,
+                service: req.body.service,
+                client: req.body.client,
+                manager: req.body.manager,
+                attachment: result?.secure_url,
+                // attachment: url + '/public/' + req?.file?.filename
+            });
             const populatedOrder = await newOrder.save();
             await companyModel.updateOne({ _id: companyId }, {
                 $push: {  orders: populatedOrder._id }
