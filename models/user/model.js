@@ -5,20 +5,33 @@ const z = require('zod');
 const userSchemaZod = z.object({
     name: z.string()
     .min(3, { message: "name must be contain at least 3 characters" })
-    .max(16, { message: "name must be contain at most 16 characters" }),
-    email: z.string().email({ message: "invalid email address" }),
-    password: z.string(),
-    country: z.string()
+    .max(16, { message: "name must be contain at most 16 characters" })
+    .nonempty({ message: "name is required" }),
+    email: z.string()
+    .email({ message: "invalid email address" })
+    .nonempty({ message: "email is required" }),
+    password: z.string()
+    .nonempty({ message: "password is required" }),
+    country: z
+      .string()
       .min(3, { message: "country name must be contain at least 3 characters" })
-      .max(16, { message: "country name must be contain at most 16 characters" }),
+      .max(16, { message: "country name must be contain at most 16 characters" })
+      .optional(),
     city: z
       .string()
       .min(3, { message: "country name must be contain at least 3 characters" })
-      .max(16, { message: "country name must be contain at most 16 characters" }),
-    state: z.string()
+      .max(16, { message: "country name must be contain at most 16 characters" })
+      .optional(),
+    state: z
+    .string()
     .min(3, { message: "state name must be contain at least 3 characters" })
-    .max(16, { message: "state name must be contain at most 16 characters" }),
-    zip: z.number().min(1000).max(999999),
+    .max(16, { message: "state name must be contain at most 16 characters" })
+    .optional(),
+    zip: z
+    .number()
+    .min(1000)
+    .max(999999)
+    .optional(),
     role: z.enum(["Super Admin", "Admin", "Moderator", "Client", "User"]),
     image: z.any(),
     orders: z.array(z.string().optional()),
@@ -41,26 +54,27 @@ const userSchema = new mongoose.Schema({
     },
     country: {
         type: String,
-        required: true
+        required: false
     },
     city: {
         type: String,
-        required: true
+        required: false
     },
     state: {
         type: String,
-        required: true
+        required: false
     },
     zip: {
         type: Number,
-        required: true
+        required: false
     },
     role: {
         type: String,
         enum: {
             values: ["Super Admin","Admin", "Moderator", "Client", "User"],
-            message: '{VALUE} is not supported'
-        }
+            message: '{VALUE} is not supported',
+        },
+        default: "User"
     },
     image: String,
     // orders details
@@ -116,6 +130,7 @@ module.exports = userModel;
 {
     "name" : "jack",
     "email": "jack@gmail.com",
+    "password": "Jack@123",
     "country": "USA",
     "city": "new york",
     "state": "new york",

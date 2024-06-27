@@ -9,66 +9,61 @@ const userController = {
     create: async (req, res) => {
         try {
             const companyId = '65c687c66ec327c1dae9041f';
-            // const url = req.protocol + '://' + req.get('host');
             const hashedPassword = await bcrypt.hash(req?.body?.password, 10);
-            const result = await cloudinary.uploader.upload(req?.file?.path);
-            const newUser = new userModel({
-                name: req?.body?.name,
-                email: req?.body?.email,
-                password: hashedPassword,
-                country: req?.body?.country,
-                city: req?.body?.city,
-                state: req?.body?.state,
-                zip: req?.body?.zip,
-                address: req?.body?.city + ', ' + req?.body?.state + ', ' + req?.body?.country + ', ' + req?.body?.zip,  
-                role: req?.body?.role,
-                image: result?.secure_url,
-                // image: url + '/public/' + req?.file?.filename,
-            });
-        const populatedUser = await newUser.save();
-         await companyModel.updateOne({ _id: companyId }, {
-            $push: { users: populatedUser._id }
-        });
-         res.status(200).json({ 
-            // user: newUser, 
-            message: "Successfully Inserted New User"
-        })
-        } catch (error) {
-         console.log(error);   
-         res.status(500).json({ 
-            message: "Thare was a Server Side Error",
-            error: error 
-         })
-        }
-    },
-    login: async (req, res) => {
-        try {
-            const user = await userModel.find({ email: req.body.email });
+            let imageUrl = '';
+            if (req?.file?.path) {
+                const result = await cloudinary.uploader.upload(req?.file?.path);
+                imageUrl = result?.secure_url;
+            }
+            const existUser = await userModel.findOne({ email: req?.body?.email });
 
-            if (user && user.length > 0) {
-                const isValidPassword = await bcrypt.compare(
-                    req.body.password, user[0].password
-                );
-                if (isValidPassword) {
-                   // generate token
-                    const token = jwt.sign({
-                      userEmail: user[0].email,
-                      userRole: user[0].role,
-                    }, process.env.JWT_SECRET,
-                    // {expiresIn: '1h'}
-                    );
-                    res.status(200).json({ 
-                      access_token: token,
-                      message: "Login Successful!"
-                    })
-                } else {
-                    res.status(401).json({error: "Authetication Failed!"})
-                }
-            } else {
-                res.status(401).json({error: "Authetication Failed!"})
-            } 
+            if(!existUser){
+                const newUser = new userModel({
+                    name: req?.body?.name,
+                    email: req?.body?.email,
+                    password: hashedPassword,
+                    country: req?.body?.country,
+                    city: req?.body?.city,
+                    state: req?.body?.state,
+                    zip: req?.body?.zip,
+                    address: `${req?.body?.city}, ${req?.body?.state}, ${req?.body?.country}, ${req?.body?.zip}`,  
+                    role: req?.body?.role,
+                    image: imageUrl,
+                })
+                const populatedUser = await newUser.save();
+                await companyModel.updateOne({ _id: companyId }, {
+                    $push: { users: populatedUser._id }
+                });
+                res.status(200).json({ 
+                    message: "Successfully Inserted New User",
+                })
+            }else{
+                const updatedUser = await userModel.findOneAndUpdate(
+                    { email: req.body?.email }, 
+                    { $set: {
+                        name: req?.body?.name,
+                        email: req?.body?.email,
+                        password: hashedPassword,
+                        country: req?.body?.country,
+                        city: req?.body?.city,
+                        state: req?.body?.state,
+                        zip: req?.body?.zip,
+                        address: `${req?.body?.city}, ${req?.body?.state}, ${req?.body?.country}, ${req?.body?.zip}`,  
+                        role: req?.body?.role,
+                        image: imageUrl,
+                  }
+                },{ new: true })
+
+                res.status(200).json({ 
+                    message: "Successfully updated existing user",
+                })
+            }
         } catch (error) {
-         res.status(500).json({message: "Thare was a Server Side Error"})
+            console.log(error);   
+            res.status(500).json({ 
+                message: "There was a Server Side Error",
+                error: error 
+            })
         }
     },
     getAll: async (req, res) => {
@@ -83,7 +78,7 @@ const userController = {
                 message: "Successfully Retrieved" 
             })
         } catch (error) {
-            res.status(500).json({ message: "Thare was a Server Side Error" })
+            res.status(500).json({ message: "There was a Server Side Error" })
         }
     },
     findById: async (req, res) => {
@@ -101,25 +96,32 @@ const userController = {
                 message: "Successfully Retrieved" 
             })
         } catch (error) {
-            res.status(500).json({ message: "Thare was a Server Side Error" })
+            res.status(500).json({ message: "There was a Server Side Error" })
         }
     },
     updateById: async (req, res) => {
         try {
+            const updatedUser = {
+                    name: req?.body?.name,
+                    email: req?.body?.email,
+                    country: req?.body?.country,
+                    city: req?.body?.city,
+                    state: req?.body?.state,
+                    zip: req?.body?.zip,
+                    role: req?.body?.role,
+                  }
+
+                if (req?.body?.password) {
+                    updatedUser.password = await bcrypt.hash(req?.body?.password, 10);
+                }   
+                if (req?.file?.path) {
+                    const result = await cloudinary.uploader.upload(req?.file?.path);
+                    updatedUser.image = result?.secure_url;
+                }
+
             const user = await userModel.findByIdAndUpdate(
                 req.params.id,
-                { $set: {
-                    name: req.body.name,
-                    email: req.body.email,
-                    password: req.body.password,
-                    country: req.body.country,
-                    city: req.body.city,
-                    state: req.body.state,
-                    zip: req.body.zip,
-                    role: req.body.role,
-                    image: req.body.image,
-                  }
-                },
+                { $set: updatedUser},
                 { new: true }
             );
             if (user == null) {
@@ -130,7 +132,7 @@ const userController = {
                 message: "Successfully Updated" 
             })
         } catch (error) {
-            res.status(500).json({ message: "Thare was a Server Side Error" })
+            res.status(500).json({ message: "There was a Server Side Error" })
         }
     },
     deleteById: async (req, res) => {
@@ -144,7 +146,7 @@ const userController = {
                 message: "Successfully Deleted" 
             })
         } catch (error) {
-            res.status(500).json({ message: "Thare was a Server Side Error" })
+            res.status(500).json({ message: "There was a Server Side Error" })
         }
     }
 }

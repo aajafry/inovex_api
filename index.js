@@ -13,7 +13,7 @@ const callbackGuard = require('./middlewares/callbackGuard');
 const errorGuard = require('./middlewares/errorGuard');
 
 // import routes
-const loginRoute = require('./routes/login/route');
+const authRoute = require('./routes/auth/route');
 const companyRoute = require('./routes/company/route');
 const serviceRoute = require('./routes/service/route'); 
 const userRoute = require('./routes/user/route');
@@ -48,7 +48,7 @@ app.get("/", (req, res) => res.send("Get Req From Home Route"));
 // most of cases hosting provaider did not given this king of permission.
 app.use("/public", express.static("public"));
 // jwt token genaretor route.
-app.use("/api/", loginRoute);
+app.use("/api/auth", authRoute);
 // singular because per apps dedicated for each company.
 app.use("/api/company", companyRoute); 
 app.use("/api/services", serviceRoute);
